@@ -26,9 +26,9 @@ class StudentController extends Controller
 
     public function leaveRequest(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
-            'full_name' => 'required|string|max:255',
-            'student_id' => 'required|string|max:20',
             'leave_type' => 'required|string|max:100',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -39,9 +39,9 @@ class StudentController extends Controller
         $attachmentPath = $request->file('attachment') ? $request->file('attachment')->store('leave_attachments', 'public') : null;
 
         LeaveRequest::create([
-            'user_id' => Auth::id(),
-            'full_name' => $request->full_name,
-            'student_id' => $request->student_id,
+            'user_id' => $user->id,
+            'full_name' => $user->name,
+            'student_id' => $user->id,
             'leave_type' => $request->leave_type,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,

@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LeaveRequest extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'user_id', 'full_name', 'student_id', 'leave_type', 'start_date', 'end_date', 'reason', 'attachment',
+        'full_name',
+        'student_id',
+        'leave_type',
+        'start_date',
+        'end_date',
+        'reason',
+        'attachment',
     ];
 }

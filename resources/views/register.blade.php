@@ -9,20 +9,41 @@
             @csrf
 
             <div>
+                @if ($errors->any())
+    @foreach ($errors->all() as $error)
+        <div style="border: 1px solid red; background-color: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 10px; border-radius: 4px; position: relative;">
+            <strong>ማስተንቀቂያ!</strong> {{ $error }}.
+
+            <button 
+                type="button" 
+                onclick="this.parentElement.style.display='none'" 
+                style="position: absolute; top: 5px; right: 8px; background: none; border: none; font-weight: bold; color: #721c24; cursor: pointer;"
+                aria-label="Close"
+            >
+                &times;
+            </button>
+        </div>
+    @endforeach
+@endif
+
+
+
                 <label for="name" class="text-sm text-gray-700">Name</label>
-                <input id="name" type="text" name="name" value="{{ old('name') }}" required 
+                <input id="name" type="text" name="name" value="{{ old('name') }}"  
                        class="w-full p-2 border rounded">
+
+                
             </div>
 
             <div>
                 <label for="email" class="text-sm text-gray-700">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required 
+                <input id="email" type="email" name="email" value="{{ old('email') }}"  
                        class="w-full p-2 border rounded">
             </div>
 
             <div>
                 <label for="password" class="text-sm text-gray-700">Password</label>
-                <input id="password" type="password" name="password" required 
+                <input id="password" type="password" name="password"  
                        class="w-full p-2 border rounded">
             </div>
 

@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // skipped because role already exists
+        // 
     }
 
     public function down(): void
     {
-        // skipped
+        // 
     }
 };

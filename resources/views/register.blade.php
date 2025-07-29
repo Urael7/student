@@ -12,7 +12,7 @@
                 @if ($errors->any())
     @foreach ($errors->all() as $error)
         <div style="border: 1px solid red; background-color: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 10px; border-radius: 4px; position: relative;">
-            <strong>ማስተንቀቂያ!</strong> {{ $error }}.
+            <strong>Warning!</strong> {{ $error }}.
 
             <button 
                 type="button" 

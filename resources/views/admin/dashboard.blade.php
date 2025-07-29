@@ -7,19 +7,19 @@
     <div class="grid grid-cols-4 gap-4 mb-6">
         <div class="bg-gray-100 p-4 rounded text-center">
             <p>Requests Today</p>
-            <p class="text-2xl font-bold">12</p>
+            <p class="text-2xl font-bold">{{ $requestsToday }}</p>
         </div>
         <div class="bg-gray-100 p-4 rounded text-center">
             <p>Approved This Week</p>
-            <p class="text-2xl font-bold">45</p>
+            <p class="text-2xl font-bold">{{ $approvedThisWeek }}</p>
         </div>
         <div class="bg-gray-100 p-4 rounded text-center">
             <p>Rejected</p>
-            <p class="text-2xl font-bold">8</p>
+            <p class="text-2xl font-bold">{{ $rejected }}</p>
         </div>
         <div class="bg-gray-100 p-4 rounded text-center">
             <p>Pending</p>
-            <p class="text-2xl font-bold">20</p>
+            <p class="text-2xl font-bold">{{ $pending }}</p>
         </div>
     </div>
 
@@ -29,44 +29,61 @@
             <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
         </div>
         <div class="flex justify-between mt-2">
-            <div class="w-10 h-16 bg-gray-300 rounded"></div>
-            <div class="w-10 h-20 bg-gray-300 rounded"></div>
-            <div class="w-10 h-24 bg-gray-300 rounded"></div>
-            <div class="w-10 h-18 bg-gray-300 rounded"></div>
-            <div class="w-10 h-22 bg-gray-300 rounded"></div>
-            <div class="w-10 h-14 bg-gray-300 rounded"></div>
-            <div class="w-10 h-16 bg-gray-300 rounded"></div>
+            @php
+                use App\Models\LeaveRequest;
+                $weekCounts = [];
+                for ($i = 0; $i < 7; $i++) {
+                    $date = Carbon\Carbon::now()->startOfWeek()->addDays($i);
+                    $weekCounts[$i] = LeaveRequest::whereDate('created_at', $date)->count();
+                }
+            @endphp
+            <div class="w-10 h-{{ $weekCounts[0] * 2 }} bg-gray-300 rounded" style="height: {{ max(10, $weekCounts[0] * 2) }}px;"></div>
+            <div class="w-10 h-{{ $weekCounts[1] * 2 }} bg-gray-300 rounded" style="height: {{ max(10, $weekCounts[1] * 2) }}px;"></div>
+            <div class="w-10 h-{{ $weekCounts[2] * 2 }} bg-gray-300 rounded" style="height: {{ max(10, $weekCounts[2] * 2) }}px;"></div>
+            <div class="w-10 h-{{ $weekCounts[3] * 2 }} bg-gray-300 rounded" style="height: {{ max(10, $weekCounts[3] * 2) }}px;"></div>
+            <div class="w-10 h-{{ $weekCounts[4] * 2 }} bg-gray-300 rounded" style="height: {{ max(10, $weekCounts[4] * 2) }}px;"></div>
+            <div class="w-10 h-{{ $weekCounts[5] * 2 }} bg-gray-300 rounded" style="height: {{ max(10, $weekCounts[5] * 2) }}px;"></div>
+            <div class="w-10 h-{{ $weekCounts[6] * 2 }} bg-gray-300 rounded" style="height: {{ max(10, $weekCounts[6] * 2) }}px;"></div>
         </div>
     </div>
 
     <div class="bg-gray-100 p-6 rounded">
         <h2 class="text-lg font-bold mb-2">Recent Requests</h2>
         <div class="space-y-4">
-            <div class="flex justify-between">
-                <span>Ethan Harper</span>
-                <span>2024-07-26</span>
-                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">Approved</span>
-            </div>
-            <div class="flex justify-between">
-                <span>Olivia Bennett</span>
-                <span>2024-07-25</span>
-                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded">Pending</span>
-            </div>
-            <div class="flex justify-between">
-                <span>Noah Carter</span>
-                <span>2024-07-24</span>
-                <span class="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded">Rejected</span>
-            </div>
-            <div class="flex justify-between">
-                <span>Ava Morgan</span>
-                <span>2024-07-23</span>
-                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded">Approved</span>
-            </div>
-            <div class="flex justify-between">
-                <span>Liam Foster</span>
-                <span>2024-07-22</span>
-                <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded">Pending</span>
-            </div>
+            @foreach ($recentRequests as $request)
+                <div class="flex justify-between items-center">
+                    <span>{{ $request->full_name }}</span>
+                    <span>{{ $request->created_at->format('Y-m-d') }}</span>
+                    <span class="{{ $request->status === 'Approved' ? 'bg-green-100 text-green-800' : ($request->status === 'Rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }} text-xs font-semibold px-2 py-1 rounded">
+                        {{ $request->status }}
+                    </span>
+                    <div>
+                        <button onclick="document.getElementById('info-{{ $request->id }}').classList.toggle('hidden')" class="text-blue-600 text-xs mr-2">Full Information</button>
+                        @if ($request->attachment)
+                            <a href="{{ asset('storage/' . $request->attachment) }}" class="text-blue-600 text-xs mr-2" target="_blank">View Attachment</a>
+                        @else
+                            <span class="text-gray-500 text-xs mr-2">No Attachment</span>
+                        @endif
+                        @if ($request->status === 'Pending')
+                            <form action="{{ route('admin.leave.update', $request->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" name="status" value="Approved" class="bg-green-600 text-white text-xs px-2 py-1 rounded mr-1 hover:bg-green-700">Accept</button>
+                                <button type="submit" name="status" value="Rejected" class="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700">Reject</button>
+                            </form>
+                        @endif
+                        <div id="info-{{ $request->id }}" class="hidden mt-2 p-2 bg-white border rounded text-sm">
+                            <p><strong>Full Name:</strong> {{ $request->full_name }}</p>
+                            <p><strong>Student ID:</strong> {{ $request->student_id }}</p>
+                            <p><strong>Leave Type:</strong> {{ $request->leave_type }}</p>
+                            <p><strong>Start Date:</strong> {{ $request->start_date }}</p>
+                            <p><strong>End Date:</strong> {{ $request->end_date }}</p>
+                            <p><strong>Reason:</strong> {{ $request->reason }}</p>
+                            <p><strong>Attachment:</strong> {{ $request->attachment ? 'Yes' : 'No' }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
 
@@ -75,7 +92,6 @@
             @csrf
             <button type="submit" class="text-blue-600">Logout</button>
         </form>
-        <a href="#" class="text-blue-600">Generate Report (PDF)</a>
     </div>
 </div>
 @endsection

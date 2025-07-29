@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
+    public function showLoginForm(Request $request)
+    {
+        $role = $request->query('role', 'student');
+        return view('auth.login', ['role' => $role]);
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([

@@ -10,6 +10,7 @@ class LeaveRequest extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'full_name',
         'student_id',
         'leave_type',
@@ -17,5 +18,6 @@ class LeaveRequest extends Model
         'end_date',
         'reason',
         'attachment',
+        'status',
     ];
 }

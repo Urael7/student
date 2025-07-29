@@ -11,7 +11,6 @@ class StudentController extends Controller
 {
     public function dashboard()
     {
-        // Ensure user is authenticated
         if (!Auth::check()) {
             return redirect('/login')->with('status', 'Please log in to access the student dashboard.');
         }
@@ -41,12 +40,13 @@ class StudentController extends Controller
         LeaveRequest::create([
             'user_id' => $user->id,
             'full_name' => $user->name,
-            'student_id' => $user->id,
+            'student_id' => $user->student_id ?? $user->id,
             'leave_type' => $request->leave_type,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'reason' => $request->reason,
             'attachment' => $attachmentPath,
+            'status' => 'Pending',
         ]);
 
         return redirect()->route('student.dashboard')->with('status', 'Leave request submitted successfully!');

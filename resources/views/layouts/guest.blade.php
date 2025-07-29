@@ -4,6 +4,7 @@
     <title>@yield('title', 'My App')</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
     </style>

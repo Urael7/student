@@ -28,7 +28,7 @@
 
 
 
-                <label for="name" class="text-sm text-gray-700">Name</label>
+                <label for="name" class="text-sm text-gray-700">Full Name</label>
                 <input id="name" type="text" name="name" value="{{ old('name') }}"  
                        class="w-full p-2 border rounded">
 

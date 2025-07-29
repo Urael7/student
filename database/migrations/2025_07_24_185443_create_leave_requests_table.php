@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('leave_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained(); // assumes users table exists
+            $table->foreignId('user_id')->constrained();
             $table->string('full_name');
             $table->string('student_id');
             $table->string('leave_type');
@@ -21,13 +18,11 @@ return new class extends Migration
             $table->date('end_date');
             $table->text('reason');
             $table->string('attachment')->nullable();
+            $table->string('status')->default('Pending');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('leave_requests');
